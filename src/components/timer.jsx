@@ -1,8 +1,10 @@
+import moment from 'moment'
 import React from 'react'
 
 export default class extends React.Component {
 
     timer = null
+    time = 0
     constructor(props) {
         super(props)
         this.state = {
@@ -14,10 +16,18 @@ export default class extends React.Component {
 
     pause = () => {
         if(this.state.isPause) {
-            this.timer = setInterval(() => this.setState({
+            this.timer = setInterval(() => {
+                var time = moment.duration(this.time + 1, 'seconds')
+                this.setState({
                     ...this.state,
-                    time: this.state.time + 1
-            }), 1000)
+                    time: moment({
+                        h: time.hours(),
+                        m: time.minutes(),
+                        s: time.seconds()
+                    }).format(time.minutes() >= 1 ? time.hours() >= 1 ? 'HH:mm:ss' : 'mm:ss' : 'ss')
+                })
+                this.time ++
+            }, 1000)
         } else {
             clearInterval(this.timer)
         }
@@ -29,7 +39,6 @@ export default class extends React.Component {
     }
     clear = () => this.setState({
         ...this.state,
-        time: 0,
         record: []
     })
     record = () => this.setState({
